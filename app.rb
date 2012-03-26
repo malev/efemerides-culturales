@@ -40,7 +40,7 @@ end
 # permissions your app needs.
 # See https://developers.facebook.com/docs/reference/api/permissions/
 # for a full list of permissions
-FACEBOOK_SCOPE = 'user_likes,user_photos,user_photo_video_tags,user_birthday'
+FACEBOOK_SCOPE = 'user_likes,user_photos,user_birthday'
 
 unless ENV["FACEBOOK_APP_ID"] && ENV["FACEBOOK_SECRET"]
   abort("missing env vars: please set FACEBOOK_APP_ID and FACEBOOK_SECRET with your app credentials")
@@ -54,6 +54,10 @@ before do
 end
 
 helpers do
+  def num_to_month(num)
+    %w(Enero Febrero Marzo Abril Mayo Junio Julio Agosto Setiembre Octubre Noviembre Diciembre)[num.to_i - 1]
+  end
+
   def host
     request.env['HTTP_HOST']
   end

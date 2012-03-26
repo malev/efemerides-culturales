@@ -43,7 +43,7 @@ header {
 }
 
 header h1 {
-  border-bottom: 2px solid #e9e9e9;
+  border-bottom: 2px solid #2ECCFA;
   margin: 0 0 9px;
   padding: 2px 0 8px;
 }
@@ -66,7 +66,9 @@ header #picture {
 header .tagline {
   float: left;
 }
-
+header .share ul li{
+  margin-top: 5px;
+}
 #share-app {
   float: right;
   width: 344px;
@@ -194,17 +196,6 @@ header .tagline {
   padding: 20px 5px 20px 10px;
 }
 
-#guides ul li,
-#samples .list {
-  float: left;
-  margin-right: 3px;
-  width: 172px;
-}
-
-#guides ul li p,
-#samples ul {
-  padding: 0 4px;
-}
 /* ------------------------------------------ */
 
 /* =guides
@@ -216,8 +207,12 @@ header .tagline {
 }
 
 #guides ul li {
-  font-size: 11px;
+  color: #666;
+  font-size: 14px;
   list-style: none;
+}
+#guides ul li .year{
+  font-weight: bold;
 }
 
 #guides ul li p {
@@ -251,6 +246,26 @@ header .tagline {
 
 #guides ul li a.heroku {
   background-position: 35px -519px;
+}
+#guides .share{
+  margin-top: 15px;
+  border-top: 2px solid #2ECCFA;
+  padding-top: 10px;
+}
+#guides .share ul{
+  margin: 10px;
+}
+#guides .share ul li{
+  list-style: none;
+  float: left;
+  width: 33%;
+  text-align: center;
+}
+#guides .thanks{
+  text-align: center;
+  margin-top: 50px;
+  font-size: 11px;
+  font-style: italic;
 }
 /* ------------------------------------------ */
 

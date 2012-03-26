@@ -83,42 +83,52 @@ error(Koala::Facebook::APIError) do
 end
 
 get "/" do
-  # Get base API Connection
-  @graph  = Koala::Facebook::API.new(session[:access_token])
+  redirect '/guest' unless session[:access_token]
 
-  # Get public details of current application
+  @graph  = Koala::Facebook::API.new(session[:access_token])
   @app  =  @graph.get_object(ENV["FACEBOOK_APP_ID"])
   @events = []
 
-  if session[:access_token]
-    @user = @graph.get_object("me")
+  @user = @graph.get_object("me")
 
-    if @user['birthday']
-      birth   = @user['birthday'].split("/")
-      @events  = Event.search(birth[0], birth[1])
-    end
-
-    @friends = @graph.get_connections('me', 'friends')
-    @photos  = @graph.get_connections('me', 'photos')
-    @likes   = @graph.get_connections('me', 'likes')
-
-    if User.where(:facebook_id => @user['id']).count == 0
-      @storable_user = User.parse(@user)
-      @storable_user.likes = @likes
-      @storable_user.friends = @friends
-      @storable_user.photos = @photos
-      @storable_user.save
-    end
-
-    # for other data you can always run fql
-    @friends_using_app = @graph.fql_query("SELECT uid, name, is_app_user, pic_square FROM user WHERE uid in (SELECT uid2 FROM friend WHERE uid1 = me()) AND is_app_user = 1")
+  if @user['birthday']
+    birth   = @user['birthday'].split("/")
+    @events  = Event.search(birth[0], birth[1])
   end
+
+  @friends = @graph.get_connections('me', 'friends')
+  @photos  = @graph.get_connections('me', 'photos')
+  @likes   = @graph.get_connections('me', 'likes')
+
+  if User.where(:facebook_id => @user['id']).count == 0
+    @storable_user = User.parse(@user)
+    @storable_user.likes = @likes
+    @storable_user.friends = @friends
+    @storable_user.photos = @photos
+    @storable_user.save
+  end
+
+  # for other data you can always run fql
+  @friends_using_app = @graph.fql_query("SELECT uid, name, is_app_user, pic_square FROM user WHERE uid in (SELECT uid2 FROM friend WHERE uid1 = me()) AND is_app_user = 1")
+
   erb :index
+end
+
+get "/guest" do
+  redirect '/' if session[:access_token]
+  @graph  = Koala::Facebook::API.new(session[:access_token])
+  @app  =  @graph.get_object(ENV["FACEBOOK_APP_ID"])
+
+  erb :guest
 end
 
 # used by Canvas apps - redirect the POST to be a regular GET
 post "/" do
   redirect "/"
+end
+
+post "/guest" do
+  redirect "/guest"
 end
 
 # used to close the browser window opened to post to wall/send to friends

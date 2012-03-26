@@ -171,6 +171,18 @@
     <section id="get-started">
       <p>Welcome to your Facebook app, running on <span>heroku</span>!</p>
       <a href="https://devcenter.heroku.com/articles/facebook?utm_source=facebook&utm_medium=app&utm_campaign=fb_integration" target="_top" class="button">Learn How to Edit This App</a>
+      <div class='events'>
+        <% @events.each do |event| %>
+          <div class='event'>
+            <div class="year">
+              <%= event[0] %>
+            </div>
+            <div class="content">
+              <%= event[1] %>
+            </div>
+          </div>
+        <% end %>
+      </div>
     </section>
 
 
@@ -234,7 +246,6 @@
           </div>
         </section>
     <% end %>
-
 
     <section id="guides" class="clearfix">
       <h1>Learn More About Heroku &amp; Facebook Apps</h1>

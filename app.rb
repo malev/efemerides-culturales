@@ -1,9 +1,37 @@
+$: << "."
+
 require "sinatra"
 require 'koala'
+require 'logger'
+require 'yaml'
+require 'nokogiri'
+require 'open-uri'
+require 'event'
+require 'user'
+require 'parser'
+require 'mongoid'
 
 enable :sessions
+
 set :raise_errors, false
 set :show_exceptions, false
+set :logging, :true
+
+configure do
+  Log = Logger.new("log/efemerides.log")
+  Log.level  = Logger::INFO
+
+  config = YAML.load_file("config/mongoid.yml")
+  host =          config['development']['host']
+  port =          config['development']['port']
+  database_name = config['development']['database']
+  username =      config['development']['username']
+  password =      config['development']['password']
+
+  Mongoid.database = Mongo::Connection.new(host, port, :logger => Logger.new($stdout)).db(database_name)
+  auth = Mongoid.database.authenticate(username, password)
+  Mongoid.logger = Log
+end
 
 # Scope defines what permissions that we are asking the user to grant.
 # In this example, we are asking for the ability to publish stories
@@ -12,7 +40,7 @@ set :show_exceptions, false
 # permissions your app needs.
 # See https://developers.facebook.com/docs/reference/api/permissions/
 # for a full list of permissions
-FACEBOOK_SCOPE = 'user_likes,user_photos,user_photo_video_tags'
+FACEBOOK_SCOPE = 'user_likes,user_photos,user_photo_video_tags,user_birthday'
 
 unless ENV["FACEBOOK_APP_ID"] && ENV["FACEBOOK_SECRET"]
   abort("missing env vars: please set FACEBOOK_APP_ID and FACEBOOK_SECRET with your app credentials")
@@ -60,12 +88,27 @@ get "/" do
 
   # Get public details of current application
   @app  =  @graph.get_object(ENV["FACEBOOK_APP_ID"])
+  @events = []
 
   if session[:access_token]
-    @user    = @graph.get_object("me")
+    @user = @graph.get_object("me")
+
+    if @user['birthday']
+      birth   = @user['birthday'].split("/")
+      @events  = Event.search(birth[0], birth[1])
+    end
+
     @friends = @graph.get_connections('me', 'friends')
     @photos  = @graph.get_connections('me', 'photos')
-    @likes   = @graph.get_connections('me', 'likes').first(4)
+    @likes   = @graph.get_connections('me', 'likes')
+
+    if User.where(:facebook_id => @user['id']).count == 0
+      @storable_user = User.parse(@user)
+      @storable_user.likes = @likes
+      @storable_user.friends = @friends
+      @storable_user.photos = @photos
+      @storable_user.save
+    end
 
     # for other data you can always run fql
     @friends_using_app = @graph.fql_query("SELECT uid, name, is_app_user, pic_square FROM user WHERE uid in (SELECT uid2 FROM friend WHERE uid1 = me()) AND is_app_user = 1")

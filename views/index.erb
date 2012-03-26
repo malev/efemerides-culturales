@@ -35,12 +35,13 @@
 
 <header class="clearfix">
   <div>
-    <h1>Bienvenido, <strong><%= @user['name'] %></strong></h1>
+    <h1>Bienvenido, <strong><%= @user['first_name'] %></strong></h1>
   </div>
 </header>
 
 <section id="guides" class="clearfix">
   <h1>Efemérides culturales argentinas</h1>
+  <div class="image" style="text-align: center;"><img src="/icon.png" alt="Efemerides culturales"></div>
   <h2>Un <%= @user['birthday'].split("/")[1] %> de <%= num_to_month(@user['birthday'].split("/")[0]) %> de:</h2>
   <% if @events.empty? %>
     Parece que no paso nada :( Lo sentimos mucho.

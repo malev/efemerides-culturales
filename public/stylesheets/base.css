@@ -257,7 +257,7 @@ header .tagline {
 /* =samples
 --------------------------------------------- */
 #samples {
-  background-image: url("../images/samples-bg.png");
+  /*background-image: url("../images/samples-bg.png");*/
   border-bottom: 1px solid #dadada;
   border-left: 1px solid #b3b3b3;
   border-right: 1px solid #b3b3b3;
@@ -265,7 +265,7 @@ header .tagline {
 }
 
 #samples h3 {
-  background: url("../images/header-sketch.png") no-repeat;
+  /*background: url("../images/header-sketch.png") no-repeat;*/
   color: #646464;
   font-weight: bold;
   font-size: 11px;

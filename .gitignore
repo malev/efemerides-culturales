@@ -2,3 +2,4 @@
 log/
 .rvmrc
 .DS_Store
+config/mongoid.yml
